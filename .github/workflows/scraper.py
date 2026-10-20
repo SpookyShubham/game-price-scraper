@@ -21,19 +21,19 @@ def scrape_site(url, parse_fn):
 
 def parse_gameloot(soup):
     results = []
-    for card in soup.select(".product-item"):
-        name = card.select_one(".name")
-        price = card.select_one(".price")
+    for card in soup.select(".product_item"):
+        name_el = card.select_one(".product_details h5")
+        price_el = card.select_one(".product_price")
         link = card.select_one("a")
-        if not (name and price):
+        if not (name_el and price_el):
             continue
-        name_text = name.get_text(strip=True)
+        name_text = name_el.get_text(strip=True)
         results.append({
             "product_name": name_text,
             "site": "gameloot",
             "listing_type": "buy" if "buy" in name_text.lower() else "sell",
-            "price": price.get_text(strip=True),
-            "url": link["href"] if link and "href" in link.attrs else url,
+            "price": price_el.get_text(strip=True),
+            "url": link["href"] if link and "href" in link.attrs else "",
             "scraped_at": datetime.now(timezone.utc).isoformat()
         })
     return results
